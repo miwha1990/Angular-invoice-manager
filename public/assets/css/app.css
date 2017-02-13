@@ -1,0 +1,33 @@
+.spinner {
+    margin-top: 15px;
+}
+.spinner input {
+    width: 30px !important;
+}
+.spinner .input-group-btn-horizontal {
+    display: inline-block;
+    margin-left: 10px;
+}
+.spinner .input-group-btn-horizontal > .btn {
+    padding: 3px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: 3px;
+    line-height: 13px;
+}
+
+.spinner .input-group-btn-horizontall i{
+    position: absolute;
+    top: 0;
+    left: 4px;
+}
+.margin{
+    margin-top: 15px;
+}
+.totalInvoice{
+    float: left;
+}
+.invoiceItemRow{
+    cursor: pointer;
+}

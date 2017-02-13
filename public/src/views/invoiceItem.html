@@ -1,0 +1,48 @@
+<!--Content-->
+<div>
+    <!--Header-->
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title w-100" id="myModalLabel">Create new Invoice</h4>
+    </div>
+    <!--Body-->
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label for="sel1">Select Customer:</label>
+                    <select class="form-control" id="sel1">
+                        </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="sel2">Discount, %:</label>
+                    <select class="form-control" id="sel2">
+                        <option value="0">0</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="products">
+
+        </div>
+
+        <div class="form-group text-right">
+            <div id="addInvoice" class="btn btn-small btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>  add product</div>
+        </div>
+    </div>
+    <!--Footer-->
+    <div class="modal-footer">
+        <span><button type="button" class="btn btn-medium btn-danger" data-dismiss="modal">Close</button></span>
+        <span><button type="button" class="btn btn-medium btn-primary" data-dismiss="modal" id="saveInvoice">Save</button></span>
+    </div>
+</div>
+<!--/.Content-->

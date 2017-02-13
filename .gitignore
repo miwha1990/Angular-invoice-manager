@@ -1,0 +1,4 @@
+node_modules
+invoices.sqlite
+.idea
+public/bower_components

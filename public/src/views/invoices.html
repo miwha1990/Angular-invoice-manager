@@ -1,0 +1,91 @@
+<div class="container">
+	<div class="row">
+		<div class="col-sm-9">
+			<h1>Invoices</h1>
+		</div>
+		<div class="col-sm-3">
+
+			<button type="button" id="showMyModal" class="btn btn-success btn-lg waves-light"  data-toggle="modal" data-target="#myModal">New Invoice</button>
+			<!-- Modal -->
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<!--Content-->
+					<div class="modal-content">
+						<!--Header-->
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title w-100" id="myModalLabel">Create new Invoice</h4>
+						</div>
+						<!--Body-->
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-sm-8">
+									<div class="form-group">
+										<label for="sel1">Select Customer:</label>
+										<select class="form-control" id="sel1">
+											<option ng-repeat="customer in customers" data-id="{{customer.id}}">{{customer.name}}</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group">
+										<label for="sel2">Discount, %:</label>
+										<select class="form-control" id="sel2">
+											<option value="0">0</option>
+											<option value="5">5</option>
+											<option value="10">10</option>
+											<option value="15">15</option>
+											<option value="20">20</option>
+											<option value="25">25</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="products">
+								<product></product>
+							</div>
+
+							<div class="form-group text-right">
+								<div id="addInvoice" class="btn btn-small btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>  add product</div>
+							</div>
+						</div>
+						<!--Footer-->
+						<div class="modal-footer">
+							<span class="totalInvoice"><h4>Total Invoice: <strong>{{totalInvoice}}</strong>$</h4></span>
+							<span><button type="button" class="btn btn-medium btn-danger" data-dismiss="modal">Close</button></span>
+							<span><button type="button" class="btn btn-medium btn-primary" data-dismiss="modal" id="saveInvoice">Save</button></span>
+						</div>
+					</div>
+					<!--/.Content-->
+				</div>
+			</div>
+			<!-- /.Live preview-->
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<h1></h1>
+			<div class="table-responsive">
+				<table class="table table-striped table-hover">
+					<thead>
+					<tr>
+						<th>#</th>
+						<th>Customer Name</th>
+						<th>Discount, %</th>
+						<th>Total, $</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr class="invoiceItemRow" ng-repeat="invoice in invoices">
+						<th scope="row"><a href="/invoice/{{invoice.id}}">{{invoice.id}}</a></th>
+						<td><a href="/invoice/{{invoice.id}}">{{invoice.customerName}}</a></td>
+						<td><a href="/invoice/{{invoice.id}}">{{invoice.discount}}</a></td>
+						<td><a href="/invoice/{{invoice.id}}">{{invoice.total}}</a></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
