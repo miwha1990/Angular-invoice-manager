@@ -184,7 +184,7 @@
         .directive('navbar', function () {
             return {
                 restrict: 'E',
-                templateUrl: 'src/directives/navbar/navbar.html',
+                templateUrl: 'src/views/navbar.html',
                 link: function(scope, elem, attrs) {
                     $(elem).find('nav.navbar a.navbar-brand').click(function(e){
                         $(elem).find('nav.navbar ul li').removeClass('active');
@@ -200,7 +200,7 @@
         .directive('product', ['$timeout','ModelCommon', function ($timeout, ModelCommon) {
             return {
                 restrict: 'EA',
-                templateUrl: 'src/directives/productItem/product.html',
+                templateUrl: 'src/views/product.html',
 
                 link: function (scope, element, attrs) {
 
