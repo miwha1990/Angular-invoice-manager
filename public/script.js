@@ -5,8 +5,7 @@
     // configure our routes
     scotchApp.config(function ( $stateProvider, $urlRouterProvider, $locationProvider) {
         $locationProvider.html5Mode({
-            enabled: true,
-            requireBase: false
+            enabled: true
         });
 
         $urlRouterProvider.otherwise('/');
@@ -91,7 +90,33 @@
                 resolve: {
                     invoiceItems: ['ModelCommon', '$stateParams',
                         function (ModelCommon, $stateParams) {
-                            return ModelCommon.fetch('/invoices/'+$stateParams.id+'/items');
+                            return ModelCommon
+                                .fetch('/invoices/'+$stateParams.id+'/items')
+                                .then(function(res){
+
+                                    ModelCommon.fetch('/invoices/'+$stateParams.id).then(function(result){
+                                        res.total = result.total;
+                                        res.discount = result.discount;
+                                        ModelCommon
+                                            .fetchById('/customers/', result.customer_id)
+                                            .then(function(re){
+                                                res.customer =  re.name;
+                                            });
+                                    });
+                                    for(var i = 0;i < res.length; i++){
+                                        (function(e){
+                                            ModelCommon.fetch('/products/'+res[i].product_id)
+                                                .then(function(response){
+                                                    res[e].name=response.name;
+                                                    res[e].price=response.price;
+
+                                                })
+                                        })(i)
+                                    }
+
+                                    return res;
+
+                                });
                         }]
                 }
             });
@@ -109,7 +134,6 @@
                     var el = $compile( "<product></product>" )( $scope.$new() );
                     $('.products').append( el );
                 });
-
 
                 $scope.$on('change-total', function (evt, value) {
                     $scope.totalInvoice = value;
@@ -129,9 +153,32 @@
         $scope.products =  products;
     }]);
     scotchApp.controller('invoiceItemController',
-        ['$scope', 'invoiceItems',
-            function ($scope, invoiceItems) {debugger
+        ['$scope', 'invoiceItems', '$stateParams','ModelCommon',
+            function ($scope, invoiceItems, $stateParams, ModelCommon) {
                 $scope.invoiceItems =  invoiceItems;
+                $scope.invoiceId =  $stateParams.id;
+                function countTotalInvoice(items){
+                    var discount  = items.discount;
+                    var total = 0;var invoice_id
+                    for(var i = 0; i < items.length; i++){
+                        total = total + (items[i].price*items[i].quantity);
+                        invoice_id = items[i].invoice_id;
+                    }
+                    items.total = (total - (total*discount/100)).toFixed(2);
+                    ModelCommon.update('/invoices/'+ invoice_id, {total : items.total});
+                }
+                $scope.increase =  function (e) {
+                    this.item.quantity++;
+                    ModelCommon.update('/invoices/'+ this.item.invoice_id + '/items/'+ this.item.id, {quantity: this.item.quantity});
+                    countTotalInvoice(this.$parent.invoiceItems);
+                 };
+                $scope.decrease = function (e) {
+                    if(this.item.quantity>0){
+                        this.item.quantity--;
+                        ModelCommon.update('/invoices/'+ this.item.invoice_id + '/items/'+ this.item.id, {quantity: this.item.quantity});
+                        countTotalInvoice(this.$parent.invoiceItems);
+                    }
+                };
             }]);
     scotchApp
         .directive('navbar', function () {
@@ -155,13 +202,12 @@
                 restrict: 'EA',
                 templateUrl: 'src/directives/productItem/product.html',
 
-                link: function (scope, element, attrs, $rootScope) {
-                    var currentElement = $(element);
+                link: function (scope, element, attrs) {
 
-                    function initCurrentProduct(){debugger
-                            var price = currentElement.find('.productList').find(":selected").attr('data-price')*1;
-                            currentElement.find('.spinner input').val(1);
-                            currentElement.find('.totalPriceProduct').html(price);
+                    function initCurrentProduct(element){
+                        var price = element.find('.productList').find(":selected").attr('data-price')*1;
+                        element.find('.spinner input').val(1);
+                        element.find('.totalPriceProduct').html(price);
                     }
 
                     function countTotalInvoice(){
@@ -224,33 +270,31 @@
 
                         });
                     });
-                    $('.productList').unbind('change').bind('change', function() {
-                        setTimeout(function(){
-                            initCurrentProduct();
-                            countTotalInvoice();
-                        },10);
+                    $('.productList').unbind('change').bind('change', function(e) {debugger
+                        var element = $(this).parent().parent();
+                        initCurrentProduct(element);
+                        countTotalInvoice();
                     });
                     $('#showMyModal').on('click', function () {
                         setTimeout(function(){
-                            initCurrentProduct();
+                            var element = $('product');
+                            initCurrentProduct(element);
                             countTotalInvoice();
                         },10);
                     });
 
                     $('#addInvoice').on('click', function(e){
                         setTimeout(function(){
-                            initCurrentProduct();
+                            var element = $('product:last-child');debugger
+                            initCurrentProduct(element);
                             countTotalInvoice();
-                        },1000);
+                        },100);
 
                     });
 
                     $('#sel2').change(function () {
                         countTotalInvoice();
                     });
-
-
-
                 }
             }
         }]
@@ -277,6 +321,15 @@
             var route = API_URL + routeName + id;
             var defer = $q.defer();
             $http.get(route)
+                .then(function (res) {
+                    defer.resolve(res.data);
+                }, defer.reject);
+            return defer.promise;
+        };
+
+        srv.update = function (routeName, data) {
+            var defer = $q.defer();
+            $http.put((API_URL + routeName), data )
                 .then(function (res) {
                     defer.resolve(res.data);
                 }, defer.reject);
